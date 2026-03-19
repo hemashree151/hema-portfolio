@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Hema Sri Portfolio</title>
+  <style>
+    body { margin:0; font-family:Arial,sans-serif; background:#f4f4f4; text-align:center; }
+    header { background:#1e1e2f ; color:white; padding:30px; }
+    nav { background:#333; padding:10px; }
+    nav a { color:white; margin:10px; text-decoration:none; font-weight:bold; }
+    nav a:hover { color: #00adb5; }
+.box { background: white; color: black; padding: 20px; margin: 20px auto; border-radius: 15px; width: 90%; max-width: 400px; }
+    ul { text-align:left; }
+    footer { text-align:center; padding:15px; background:#1e1e2f; color:white; }
+    .btn { padding:10px 20px; background:#00adb5; color:white; border:none; border-radius:5px; cursor:pointer; }
+    /* Quiz Styles */
+    #quiz { background:linear-gradient(to right, #36d1dc, #5b86e5); color:white; border-radius:10px; }
+    .box { background#white:; color:black; padding:20px; margin:20px auto; border-radius:15px; width:90%; max-width:400px; }
+    button { display:block; width:100%; margin:10px 0; padding:10px; border:none; border-radius:5px; cursor:pointer; }
+    .correct { background:green; color:white; }
+    .wrong { background:red; color:white; }
+    #nextBtn { background:blue; color:white; display:none; }
+    #timer { color:red; font-weight:bold; }
+    input[type="text"] { padding:10px; width:80%; border-radius:5px; border:1px solid #ccc; }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Hema Sri G</h1>
+  <p>BCA Student | Web Developer</p>
+</header>
+
+<nav>
+  <a href="#about">About</a>
+  <a href="#projects">Projects</a>
+  <a href="#quiz">Quiz</a>
+</nav>
+
+<section id="about">
+  <h2>About Me</h2>
+  <p>Hello! I am Hema Sri, a passionate BCA student learning web development. I love creating websites and small projects to improve my skills.</p>
+</section>
+
+<section id="projects">
+  <h2>Projects</h2>
+  <ul>
+    <li>Portfolio Website</li>
+    <li>Advanced Quiz Application</li>
+  </ul>
+</section>
+
+<section id="quiz">
+  <h2>Take My Quiz 🎉</h2>
+
+  <div class="box" id="startBox">
+    <p>Enter your name to start:</p>
+    <input type="text" id="username" placeholder="Your Name" />
+    <button class="btn" onclick="startQuiz()">Start Quiz</button>
+  </div>
+
+  <div class="box" id="quizBox" style="display:none;">
+    <h3 id="timer">Time: 10</h3>
+    <h2 id="question"></h2>
+    <button id="btn1" onclick="selectAnswer(this,'a')"></button>
+    <button id="btn2" onclick="selectAnswer(this,'b')"></button>
+    <button id="btn3" onclick="selectAnswer(this,'c')"></button>
+    <button id="nextBtn" onclick="nextQuestion()">Next</button>
+  </div>
+</section>
+
+<footer>
+  <p>© 2026 Hema Sri</p>
+</footer>
+
+<script>
+let questions = [
+{q:"HTML stands for?",a:"Hyper Text Markup Language",b:"High Text Machine Language",c:"None",correct:"a"},
+{q:"CSS is used for?",a:"Structure",b:"Styling",c:"Database",correct:"b"},
+{q:"JS stands for?",a:"Java Source",b:"JavaScript",c:"Just Script",correct:"b"},
+{q:"Which is not language?",a:"HTML",b:"CSS",c:"Photoshop",correct:"c"},
+{q:"Which tag for link?",a:"<a>",b:"<img>",c:"<p>",correct:"a"},
+{q:"Which is backend?",a:"HTML",b:"CSS",c:"Node.js",correct:"c"},
+{q:"Which is database?",a:"MySQL",b:"HTML",c:"CSS",correct:"a"},
+{q:"Which is frontend?",a:"Python",b:"HTML",c:"Java",correct:"b"},
+{q:"Which company made JS?",a:"Netscape",b:"Google",c:"Microsoft",correct:"a"},
+{q:"Which is styling?",a:"CSS",b:"HTML",c:"SQL",correct:"a"},
+{q:"Which tag for paragraph?",a:"<p>",b:"<h1>",c:"<div>",correct:"a"},
+{q:"Which is loop?",a:"for",b:"if",c:"else",correct:"a"},
+{q:"Which is condition?",a:"for",b:"if",c:"loop",correct:"b"},
+{q:"Which is framework?",a:"React",b:"HTML",c:"CSS",correct:"a"},
+{q:"Which is DB?",a:"MongoDB",b:"HTML",c:"CSS",correct:"a"},
+{q:"Which is server?",a:"Node.js",b:"CSS",c:"HTML",correct:"a"},
+{q:"Which symbol for id?",a:"#",b:".",c:"$",correct:"a"},
+{q:"Which symbol for class?",a:".",b:"#",c:"@",correct:"a"},
+{q:"Which is tag?",a:"<div>",b:"class",c:"id",correct:"a"},
+{q:"Which is scripting?",a:"JavaScript",b:"HTML",c:"CSS",correct:"a"}
+];
+
+let index=0, score=0, time=10, timer, username="";
+const startBox=document.getElementById("startBox");
+const quizBox=document.getElementById("quizBox");
+const btn1=document.getElementById("btn1");
+const btn2=document.getElementById("btn2");
+const btn3=document.getElementById("btn3");
+const nextBtn=document.getElementById("nextBtn");
+
+function startQuiz(){
+  username=document.getElementById("username").value.trim();
+  if(username===""){alert("Please enter your name!"); return;}
+  startBox.style.display="none";
+  quizBox.style.display="block";
+  index=0; score=0;
+  loadQuestion();
+}
+
+function loadQuestion(){
+  resetState();
+  let q=questions[index];
+  document.getElementById("question").innerText=q.q;
+  btn1.innerText="A) "+q.a;
+  btn2.innerText="B) "+q.b;
+  btn3.innerText="C) "+q.c;
+  startTimer();
+}
+
+function resetState(){
+  clearInterval(timer);
+  time=10;
+  document.getElementById("timer").innerText="Time: "+time;
+  [btn1,btn2,btn3].forEach(b=>{b.classList.remove("correct","wrong"); b.disabled=false;});
+  nextBtn.style.display="none";
+}
+
+function startTimer(){
+  timer=setInterval(()=>{
+    time--; document.getElementById("timer").innerText="Time: "+time;
+    if(time<=0){clearInterval(timer); nextBtn.style.display="block";}
+  },1000);
+}
+
+function selectAnswer(btn,ans){
+  clearInterval(timer);
+  if(ans===questions[index].correct){btn.classList.add("correct"); score++;}
+  else btn.classList.add("wrong");
+  [btn1,btn2,btn3].forEach(b=>b.disabled=true);
+  nextBtn.style.display="block";
+}
+
+function nextQuestion(){
+  index++;
+  if(index<questions.length) loadQuestion();
+  else showResults();
+}
+
+function showResults(){
+  let percentage=(score/questions.length)*100;
+  let grade="";
+  if(percentage>=90) grade="A+ 🏆";
+  else if(percentage>=75) grade="A 🎉";
+  else if(percentage>=50) grade="B 👍";
+  else grade="Fail ❌";
+
+  quizBox.innerHTML=`<h2>Quiz Completed 🎉</h2>
+    <h3>Name: ${username}</h3>
+    <h3>Score: ${score}/${questions.length}</h3>
+    <h3>Percentage: ${percentage.toFixed(2)}%</h3>
+    <h3>Grade: ${grade}</h3>
+    <button class="btn" onclick="location.reload()">Retake Quiz</button>`;
+}
+</script>
+
+</body>
+</html>
